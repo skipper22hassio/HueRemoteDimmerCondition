@@ -2,7 +2,7 @@ blueprint:
   name: Hue Dimmer Remote
   description: |
     (Dec 2021 Update) Using a Hue bridge with which a dimmer remote is paired,  allows you to configure actions based on said Hue Dimmer Remote
-    NOTE: tested with RWL020 and RWL022, but community says it also works with RWL021!
+    NOTE: tested with RWL020 and RWL022, but community says it also works with RWL021! Based on https://gist.github.com/codycodes/f051781c35cfdfee15162ff680c9cbd8
   domain: automation
   source_url: https://gist.github.com/codycodes/f051781c35cfdfee15162ff680c9cbd8
   input:
@@ -12,6 +12,16 @@ blueprint:
       selector:
         device:
           integration: hue
+    start_time:
+      name: Start Time
+      description: The start time for the condition (HH:MM).
+      selector:
+        time:
+    end_time:
+      name: End Time
+      description: The end time for the condition (HH:MM).
+      selector:
+        time:
     on_short_action:
       name: On Short Press Action
       description: Action to perform after pressing ON shortly
@@ -112,7 +122,10 @@ trigger:
     type: long_release
     subtype: 4
     id: off long
-condition: []
+condition:
+  - condition: time
+    after: !input start_time #'{{ input_datetime.start_time }}'
+    before: !input end_time #'{{ input_datetime.end_time }}'
 action:
   - choose:
       - conditions:
